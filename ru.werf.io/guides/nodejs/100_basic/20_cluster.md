@@ -32,6 +32,7 @@ permalink: nodejs/100_basic/20_cluster.html
 <div style="display: flex; justify-content: space-between; margin: 0 10px 0 20px;">
 <div class="button__blue button__blue_inline expand_columns_button" id="minikube_button"><a href="#">Minikube</a></div>
 <div class="button__blue button__blue_inline expand_columns_button" id="docker_desktop_button"><a href="#">Docker Desktop</a></div>
+<div class="button__blue button__blue_inline expand_columns_button" id="kind_button"><a href="#">Kind</a></div>
 <div class="button__blue button__blue_inline expand_columns_button" id="cloud_provider_button"><a href="#">Использование облачного провайдера</a></div>
 <div class="button__blue button__blue_inline expand_columns_button" id="has_cluster_button"><a href="#">У меня уже есть кластер</a></div>
 </div>
@@ -44,6 +45,10 @@ permalink: nodejs/100_basic/20_cluster.html
 {% include_relative 20_cluster_docker_desktop.md %}
 {% endexpandonclick %}
 
+{% expandonclick id="kind_button__content" %}
+{% include_relative 20_cluster_kind.md %}
+{% endexpandonclick %}
+
 {% expandonclick id="cloud_provider_button__content" %}
 {% include_relative 20_cluster_cloud_provider.md %}
 {% endexpandonclick %}
@@ -54,7 +59,7 @@ permalink: nodejs/100_basic/20_cluster.html
 
 ## Финальные проверки
 
-Если вы уже убедились в работоспособности самого кластера, пришло время проверить registry и ingress. Эти команды:
+Если вы уже убедились в работоспособности самого кластера, пришло время проверить registry и Ingress. Эти команды:
 
 ```shell
 docker tag ubuntu:18.04 registry.example.com/ubuntu:18.04
@@ -67,7 +72,7 @@ docker push registry.example.com/ubuntu:18.04
 curl example.com
 ```
 
-… должна выдать страницу ошибки nginx ingress (если вы ещё не задеплоили приложения в кластер).
+… должна выдать страницу ошибки nginx Ingress (если вы ещё не задеплоили приложения в кластер).
 
 <div id="go-forth-button">
     <go-forth url="30_deploy.html" label="Деплой приложения" framework="{{ page.label_framework }}" ci="{{ page.label_ci }}" guide-code="{{ page.guide_code }}" base-url="{{ site.baseurl }}"></go-forth>

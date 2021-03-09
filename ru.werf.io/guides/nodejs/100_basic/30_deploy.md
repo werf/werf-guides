@@ -147,22 +147,28 @@ werf реализует тегирование, которое называет�
 Если вы хотите узнать подробности — читайте [в документации]({{ site.docsurl }}/documentation/internals/stages_and_storage.html#%D0%B8%D0%BC%D0%B5%D0%BD%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D1%81%D1%82%D0%B0%D0%B4%D0%B8%D0%B9) и [статье на Хабре](https://habr.com/ru/company/flant/blog/495112/).
 {% endofftopic %}
 
-Сделайте коммит изменений в репозитории с кодом и затем выполните:
+Сделайте коммит изменений в репозитории с кодом и затем выполните команду:
 
 ```shell
 werf converge --repo registry.example.com/werf-guided-nodejs
 ```
 
+Для локального registry без авторизации:
+
+```shell
+werf converge --repo registry.example.com:5000/werf-guided-nodejs --insecure-registry=true
+```
+
 В результате вы должны увидеть логи примерно такого вида:
 
 ```
-│ │ basicapp/dockerfile  Successfully built 7e38465ee6de
-│ │ basicapp/dockerfile  Successfully tagged cbb1cef2-a03a-432f-b13d-b95f0f0cb4e9:latest
+│ │ basicapp/dockerfile  Successfully built 706dc48a845e
+│ │ basicapp/dockerfile  Successfully tagged 4d3e9466-88b7-4b82-a6a9-bf24a17f6331:latest
 │ ├ Info
-│ │       name: localhost:5005/werf-guided-nodejs:017ce9df8dbd7d3505546c95557f1c1f39ce1e6666aaae29e8c12608-1605619646009
-│ │       size: 375.8 MiB
-│ └ Building stage basicapp/dockerfile (209.48 seconds)
-└ ⛵ image basicapp (213.60 seconds)
+│ │       name: registry.example.com:5000/werf-guided-nodejs:0ca86cb6b4476c704a032a2e42cc3a6a76579f63d4888907b1dddb0a-1615207112506
+│ │       size: 375.4 MiB
+│ └ Building stage basicapp/dockerfile (70.20 seconds)
+└ ⛵ image basicapp (71.05 seconds)
 
 Release "werf-guided-nodejs" does not exist. Installing it now.
 
@@ -181,7 +187,7 @@ NAMESPACE: werf-guided-nodejs
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
-Running time 222.54 seconds
+Running time 75.87 seconds
 ```
 
 После этого приложение должно быть доступно в браузере:
