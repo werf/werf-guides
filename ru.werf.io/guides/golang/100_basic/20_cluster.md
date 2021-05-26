@@ -57,8 +57,9 @@ permalink: golang/100_basic/20_cluster.html
 Если вы уже убедились в работоспособности самого кластера, пришло время проверить registry и ingress. Эти команды:
 
 ```shell
-docker tag ubuntu:18.04 registry.example.com/ubuntu:18.04
-docker push registry.example.com/ubuntu:18.04
+docker pull ubuntu:18.04
+docker tag ubuntu:18.04 registry.example.com:5000/ubuntu:18.04
+docker push registry.example.com:5000/ubuntu:18.04
 ```
 
 … должны успешно загрузить образ Ubuntu в registry и не выдать ошибку. А эта команда:

@@ -24,7 +24,10 @@ kubectl get ns
 
 ### Ingress
 
-В Minikube нужно [включить addon](https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/#enable-the-ingress-controller).
+В Minikube нужно [включить addon](https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/#enable-the-ingress-controller):
+```shell
+minikube addons enable ingress
+```
 
 {% offtopic title="Как убедиться, что с Ingress всё хорошо?" %}
 
@@ -60,11 +63,10 @@ minikube addons enable registry
 
 В самоучителе предполагается, что кластер (вернее, его Nginx Ingress) доступен по адресу `example.com`, а registry — по адресу `registry.example.com`. Именно этот домен и его поддомены указаны в дальнейшем в конфигах. В случае, если вы будете использовать другие адреса, скорректируйте конфигурацию самостоятельно.
 
-Пропишите в локальном файле `/etc/hosts` строки вида:
+Обновите локальный файл `/etc/hosts`:
 
-```
-127.0.0.1           example.com
-127.0.0.1           registry.example.com
+```shell
+printf "\n$(minikube ip) example.com\n127.0.0.1 registry.example.com\n" | sudo tee -a /etc/hosts
 ```
 
 ### Авторизация в Registry
