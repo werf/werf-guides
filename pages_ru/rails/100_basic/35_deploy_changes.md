@@ -22,7 +22,7 @@ kubectl describe deployment basicapp
 
 Deployment запускает Pod'ы. Логи пишутся в Pod'ах. Такой командой можно получить логи одного из запущенных Pod'ов:
 ```shell
-kubectl logs basicapp-57789b68-c2xlq
+kubectl logs basicapp-<podId>
 ```
 
 ### Масштабирование
@@ -87,7 +87,7 @@ git add .
 git commit -m go
 ```
 
-Запустим выкат:
+Запустим деплой:
 ```shell
 werf converge --repo REPO
 ```
@@ -120,7 +120,7 @@ curl "http://URL:PORT/api/labels"
 
 Добавим новые timestamp-поля для label: время его создания и обновления.
 
-Перейдём к новому состоянию приложения, в котором добавлены новые поля новые поля (`created_at` и `updated_at` в таблице `labels`):
+Перейдём к новому состоянию приложения, в котором добавлены новые поля (`created_at` и `updated_at` в таблице `labels`):
 ```shell
 cd werf-guides/examples/rails/017_add_fields
 git init --separate-git-dir ~/werf-guides-repo
@@ -131,13 +131,13 @@ git init --separate-git-dir ~/werf-guides-repo
   - обновлённую схему БД [schema.rb](https://github.com/werf/werf-guides/tree/master/examples/rails/017_add_fields/db/schema.rb);
   - правки в [_label.json.jbuilder](https://github.com/werf/werf-guides/tree/master/examples/rails/017_add_fields/app/views/api/labels/_label.json.jbuilder), чтобы API выдавал не только `id` и имя `label`, но и поля `created_at` и `updated_at`.
 
-Закоммитим изменения:
+Сделаем коммит изменений:
 ```shell
 git add .
 git commit -m go
 ```
 
-Запустим выкат:
+Запустим деплой:
 ```shell
 werf converge --repo REPO
 ```
@@ -170,18 +170,18 @@ git init --separate-git-dir ~/werf-guides-repo
     - [Gemfile](https://github.com/werf/werf-guides/tree/master/examples/rails/018_fixup_consistency/Gemfile)
     - [Gemfile.lock](https://github.com/werf/werf-guides/tree/master/examples/rails/018_fixup_consistency/Gemfile.lock)
 
-Закоммитим изменения:
+Сделаем коммит изменений:
 ```shell
 git add .
 git commit -m go
 ```
 
-Запустим выкат:
+Запустим деплой:
 ```shell
 werf converge --repo REPO
 ```
 
-Дождёмся выполнения команды. Заметьте, что в процессе работы в логах могут появляться ошибки подключения к БД, потому что контейнер с ней ещё не успел запуститься. Это нормально: необходимо дождаться полного запуска приложения.
+Дождёмся выполнения команды. Заметьте, что в процессе работы в логах могут появляться ошибки подключения к БД, потому что контейнер с ней ещё не успел запуститься. Это нормально - необходимо дождаться полного запуска приложения.
 
 Проверим создание и получение labels и увидим консистивное поведение:
 ```shell

@@ -40,7 +40,7 @@ spec:
 А уже во время деплоя этот манифест становится _ресурсом_ Pod в Kubernetes-кластере. Посмотреть, как этот ресурс выглядит в кластере можно с помощью команды `kubectl get`:
 
 ```shell
-$ kubectl get pod standalone-pod --output yaml
+kubectl get pod standalone-pod --output yaml
 ```
 
 ```yaml
@@ -81,7 +81,39 @@ status:
 
 ```shell
 kubectl get --all-namespaces pod
+```
+
+{% offtopic title="Посмотреть ответ" %}
+```shell
+NAMESPACE           NAME                                        READY   STATUS      RESTARTS   AGE
+ingress-nginx       ingress-nginx-admission-create-8bgk7        0/1     Completed   0          11d
+ingress-nginx       ingress-nginx-admission-patch-8fkgl         0/1     Completed   1          11d
+ingress-nginx       ingress-nginx-controller-5d88495688-6lgx9   1/1     Running     1          11d
+kube-system         coredns-74ff55c5b-hgzzx                     1/1     Running     1          13d
+kube-system         etcd-minikube                               1/1     Running     1          13d
+kube-system         kube-apiserver-minikube                     1/1     Running     1          13d
+kube-system         kube-controller-manager-minikube            1/1     Running     1          13d
+kube-system         kube-proxy-gtrcq                            1/1     Running     1          13d
+kube-system         kube-scheduler-minikube                     1/1     Running     1          13d
+kube-system         storage-provisioner                         1/1     Running     2          13d
+werf-guided-rails   basicapp-68c79f8cd7-6h888                   1/1     Running     1          11d
+```
+{% endofftopic %}
+
+```shell
 kubectl get --all-namespaces deployment
+```
+
+{% offtopic title="Посмотреть ответ" %}
+```shell
+NAMESPACE           NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+ingress-nginx       ingress-nginx-controller   1/1     1            1           11d
+kube-system         coredns                    1/1     1            1           13d
+werf-guided-rails   basicapp                   1/1     1            1           11d
+```
+{% endofftopic %}
+
+```shell
 kubectl get --all-namespaces statefulset
 kubectl get --all-namespaces job
 kubectl get --all-namespaces cronjob
@@ -89,15 +121,15 @@ kubectl get --all-namespaces cronjob
 
 Также можно получить полную конфигурацию ресурса в yaml-формате, если добавить в команду `kubectl get` опцию `--output yaml`:
 
-```yaml
-$ kubectl get --namespace default deployment somedeployment --output yaml
+```shell
+kubectl get --namespace default deployment somedeployment --output yaml
 ...
 kind: Deployment
 metadata:
   name: somedeployment
 ...
 
-$ kubectl get -n default pod somepod -o yaml
+kubectl get -n default pod somepod -o yaml
 ...
 kind: Pod
 metadata:
@@ -285,7 +317,7 @@ kubectl get ingress kubernetes-basics-app
 Попробуем достучаться до нашего приложения через Ingress:
 
 ```shell
-$ curl http://kubernetes-basics-app.example.com
+curl http://kubernetes-basics-app.example.com
 Alive.
 Our $MY_ENV_VAR value is "myEnvVarValue".
 ```
@@ -295,7 +327,7 @@ Our $MY_ENV_VAR value is "myEnvVarValue".
 Попробуем создать новый контейнер, не имеющий отношения к нашему приложению, и обратиться из него к нашему приложению через Service:
 
 ```shell
-$ kubectl run another-kubernetes-basics-app --image=alpine --rm -it -- sh  # Запустим новый контейнер.
+kubectl run another-kubernetes-basics-app --image=alpine --rm -it -- sh  # Запустим новый контейнер.
 / apk add curl  # Установим curl внутри контейнера.
 / curl http://kubernetes-basics-app  # Обратимся к одному из Pod'ов нашего приложения через Service.
 Alive.
