@@ -8,11 +8,37 @@ permalink: rails/200_real_apps/25_logging.html
 - возьмём за основу приложение из раздела basic-apps и добавим в него новый метод api;
 - сконфигурируем rails-приложение правильным образом, чтобы писать логи, которые подхватит kubernetes.
 
-Перейдём к состоянию приложения, в котором добавлен новый метод API:
+<cut>
+
+<!-- TODO: Надо сделать шаг подготовка сворачиваемым и по умолчанию свёрнутым -->
+
+## Подготовка
+
+Возьмём за основу web-приложение из раздела "первые шаги". Состояние директории `rails-app` должно соответствовать шагу `examples/rails/018_fixup_consistency`:
+
+```
+git clone https://github.com/werf/werf-guides
+cp -r werf-guides/examples/rails/018_fixup_consistency rails-app
+cd rails-app
+git init
+git add .
+git commit -m "initial"
+```
+</cut>
+
+## Добавляем логи в наше приложение
+
+[За основу взято наше web-приложение из раздела "первые шаги"](#подготовка). Данное приложение состоит из одного http api сервера.
+
+Добавляем новые исходники в наше существующее приложение для добавления нового метода api и демонстрации логирования:
 
 ```shell
-cd werf-guides/examples/rails/020_logging/
-git init --separate-git-dir ~/werf-guides-repo
+cp ../werf-guides/examples/rails/018_fixup_consistency/app/controllers/api/images_controller.rb app/controllers/api/images_controller.rb
+cp ../werf-guides/examples/rails/018_fixup_consistency/config/application.rb config/application.rb
+cp ../werf-guides/examples/rails/018_fixup_consistency/config/environments/production.rb config/environments/production.rb
+cp ../werf-guides/examples/rails/018_fixup_consistency/config/routes.rb config/routes.rb
+cp ../werf-guides/examples/rails/018_fixup_consistency/Gemfile Gemfile
+cp ../werf-guides/examples/rails/018_fixup_consistency/Gemfile.lock Gemfile.lock
 ```
 
 Рассмотрим подробнее как устроено логирование в данном примере.
@@ -24,8 +50,17 @@ git init --separate-git-dir ~/werf-guides-repo
 Поэтому стандартный логер рельсов для всех окружений переделан на такой логер, который будет писать в stdout и stderr — это наиболее правильный способ логирования приложений, запускаемых в кубах.
   - Дальнейший сбор и хранение логов, при необходимости, будет осуществляться отдельными решениями.
   - Принципиальный момент в том, что в приложении мы об этом не думаем и просто пишем в stdout/stderr.
-  - Конфигурацию логера приложения для всех окружений сделана в файле (application.rb)[https://github.com/werf/werf-guides/blob/master/examples/rails/020_logging/config/application.rb]
-  - Стандартная конфигурация логера для production-окружения удалена из файла (production.rb)[https://github.com/werf/werf-guides/blob/master/examples/rails/020_logging/config/environments/production.rb]
+  - Конфигурацию логера приложения для всех окружений сделана в файле `config/application.rb`:
+
+      {% snippetcut name="config/application.rb" url="https://github.com/werf/werf-guides/blob/master/examples/rails/100_logging/config/application.rb" %}
+      {% include_file "examples/rails/100_logging/config/application.rb" %}
+      {% endsnippetcut %}
+
+  - Стандартная конфигурация логера для production-окружения удалена из файла `config/environments/production.rb`:
+
+      {% snippetcut name="config/environments/production.rb" url="https://github.com/werf/werf-guides/blob/master/examples/rails/100_logging/config/environments/production.rb" %}
+      {% include_file "examples/rails/100_logging/config/environments/production.rb" %}
+      {% endsnippetcut %}
 
 ## Логирование в приложении
 
@@ -33,7 +68,11 @@ git init --separate-git-dir ~/werf-guides-repo
   - На вход передаётся параметр text.
   - На выходе метод генерирует png-картинку с указанным текстом.
   - В методе используется стандартный rails-логер через конструкцию `logger.debug`.
-  - Полный листинг метода смотрите в (images_controller.rb)[https://github.com/werf/werf-guides/blob/master/examples/rails/100_logging/app/controllers/api/images_controller.rb]
+  - Полный листинг метода смотрите в `images_controller.rb`:
+  
+      {% snippetcut name="app/controllers/api/images_controller.rb" url="https://github.com/werf/werf-guides/blob/master/examples/rails/100_logging/app/controllers/api/images_controller.rb" %}
+      {% include_file "examples/rails/100_logging/app/controllers/api/images_controller.rb" %}
+      {% endsnippetcut %}
 
 ## Деплоим приложение
 
