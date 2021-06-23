@@ -1,0 +1,11 @@
+{% comment %}_data/ru/100_basic/10_build/rails.yaml{% endcomment %}
+{% comment %}_data/en/100_basic/10_build/rails.yaml{% endcomment %}
+{%- assign data = site.data["100_basic"]["10_build"][page.framework_id] -%}
+
+sample1: {{ data.sample1 }} {% comment %}sample1: test1{% endcomment %}
+sample2: {{ data.sample2 }} {% comment %}sample1: test2{% endcomment %}
+
+{% comment %}_config_ru.yml{% endcomment %}
+{% comment %}_config_en.yml{% endcomment %}
+framework_id:   {{ page.framework_id }}   {% comment %}framework_id:   rails{% endcomment %}
+framework_name: {{ page.framework_name }} {% comment %}framework_name: Rails{% endcomment %}
