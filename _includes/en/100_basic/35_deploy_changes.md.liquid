@@ -1,0 +1,138 @@
+## Работаем с инфраструктурой
+### Просмотр состояния
+
+Чтобы посмотреть состояние запущенного приложения в Kubernetes, существует несколько команд.
+
+Получить список запущенных Deployment'ов и Pod'ов:
+```shell
+kubectl get deployment
+kubectl get pod
+```
+
+Посмотреть summary-информацию по Deployment'у `app`:
+```shell
+kubectl describe deployment app
+```
+
+Deployment запускает Pod'ы. Логи пишутся в Pod'ах. Такой командой можно получить логи одного из запущенных Pod'ов:
+```shell
+kubectl logs app-<podId>
+```
+
+### Масштабирование
+
+Веб-сервер запущен в Deployment'е `app`. Помотрим, сколько реплик запущено:
+
+```shell
+kubectl get pod
+```
+
+Ответ будет примерно таким:
+```shell
+NAME                 READY   STATUS    RESTARTS   AGE
+app-57789b68-kxcb9   1/1     Running   0          72m
+```
+
+Поменяем вручную на 4 реплики:
+```shell
+kubectl edit deployment app
+```
+
+В открывшемся редакторе выставляем `spec.replicas=4`, закрываем редактор.
+Снова посмотрим, сколько реплик запущено:
+```shell
+kubectl get pod
+```
+
+Ответ станет примерно таким:
+```shell
+NAME                 READY   STATUS    RESTARTS   AGE
+app-57789b68-nbdjb   1/1     Running   0          6s
+app-57789b68-dkbgx   1/1     Running   0          6s
+app-57789b68-c4thw   1/1     Running   0          6s
+app-57789b68-kxcb9   1/1     Running   0          72m
+```
+
+Мы произвели масштабирование вручную. Теперь снова запустим `werf converge`:
+```shell
+werf converge --repo <имя пользователя Docker Hub>/werf-guide-app
+```
+
+И снова посмотрим, сколько реплик запущено:
+```shell
+kubectl get pod
+```
+```shell
+NAME                      READY   STATUS    RESTARTS   AGE
+app-57789b68-kxcb9   1/1     Running   0          72m
+```
+
+Количество реплик снова соответствует таковому в Git-репозитории. Дело в том, что werf привела состояние кластера к состоянию, описанному в текущем Git-коммите. Этот принцип называется [**гитерминизмом**](https://ru.werf.io/documentation/v1.2/advanced/giterminism.html) (giterminism).
+
+Как же соблюсти **гитерминизм** и сделать всё правильно? Выставим тот же `spec.replicas=4`, но уже через состояние приложения, описанное в Git:
+
+{% include chapter_prepare_repo_commands.md.liquid examples_to=page.examples from_scratch=false %}
+
+Через файл `.helm/templates/deployment.yaml`:
+
+{% include snippetcut_example path=".helm/templates/deployment.yaml" syntax="yaml" examples=page.examples %}
+
+Запустим деплой:
+```shell
+werf converge --repo <имя пользователя Docker Hub>/werf-guide-app
+```
+
+Проверим сколько реплик запущено теперь:
+
+```shell
+kubectl get pod
+```
+```shell
+NAME                 READY   STATUS    RESTARTS   AGE
+app-57789b68-fsxlw   1/1     Running   0          7s
+app-57789b68-pqs2n   1/1     Running   0          7s
+app-57789b68-vx88n   1/1     Running   0          7s
+app-57789b68-kxcb9   1/1     Running   0          72m
+```
+
+Вернём состояние рабочей директории к предыдущему, с одной репликой:
+
+{% include chapter_prepare_repo_commands.md.liquid examples_to=page.examples_initial from_scratch=false %}
+
+Проверим содержимое `.helm/templates/deployment.yaml`:
+
+{% include snippetcut_example path=".helm/templates/deployment.yaml" syntax="yaml" examples=page.examples_initial %}
+
+Запустим деплой:
+```shell
+werf converge --repo <имя пользователя Docker Hub>/werf-guide-app
+```
+
+## Меняем приложение
+
+Наше приложение — это простейший эхо сервер:
+```shell
+curl "http://werf-guide-app/ping"
+```
+
+Сервер ответит словом `pong`.
+
+Внесём изменение в код приложения:
+
+{% include chapter_prepare_repo_commands.md.liquid examples_to=page.examples_modify_app from_scratch=false %}
+
+Ответ сервера изменяется на `hello world`:
+
+{% include snippetcut_example path="start.sh" syntax="bash" examples=page.examples_modify_app %}
+
+Запустим деплой:
+```shell
+werf converge --repo <имя пользователя Docker Hub>/werf-guide-app
+```
+
+Проверим результат:
+```shell
+curl "http://werf-guide-app/ping"
+```
+
+В ответе увидим `hello world`. Поздравляем, у нас получилось!

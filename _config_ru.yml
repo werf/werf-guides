@@ -32,6 +32,9 @@ defaults:
       sidebar: guide
       multilang: true
       toc: false
+      chapter_production_disclaimer: true
+      chapter_initial_prepare_cluster: true
+      chapter_initial_prepare_repo: true
   - scope:
       path: "pages_ru/nodejs"
       type: "pages"
@@ -52,28 +55,33 @@ defaults:
     values:
       framework_id: django
       framework_name: Django
+      multilang: true
   - scope:
       path: "pages_ru/golang"
       type: "pages"
     values:
       framework_id: golang
       framework_name: Go
+      multilang: true
+  - scope:
+      path: "pages_ru/laravel"
+      type: "pages"
+    values:
+      framework_id: laravel
+      framework_name: Laravel
   - scope:
       path: "pages_ru/rails"
       type: "pages"
     values:
       framework_id: rails
       framework_name: Rails
-      chapter_production_disclaimer: true
-      chapter_initial_prepare_cluster: true
-      chapter_initial_prepare_repo: true
   - scope:
-      path: "pages_ru/rails/100_basic"
+      path: "pages_ru/*/100_basic"
       type: "pages"
     values:
       chapter_production_disclaimer: false
   - scope:
-      path: "pages_ru/rails/*.md"
+      path: "pages_ru/*/*.md"
       type: "pages"
     values:
       chapter_production_disclaimer: false

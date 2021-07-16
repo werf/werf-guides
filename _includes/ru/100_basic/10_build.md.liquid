@@ -1,0 +1,140 @@
+## Подготовка
+
+Установите werf и его зависимости, [следуя инструкциям]({{ site.url }}/installation.html).
+
+{% offtopic title="В Windows пользователю также понадобятся права на создание символьных ссылок" %}
+1. В PowerShell выполните для текущего пользователя с правами администратора:
+```powershell
+$ntprincipal = new-object System.Security.Principal.NTAccount "$env:UserName"
+$sidstr = $ntprincipal.Translate([System.Security.Principal.SecurityIdentifier]).Value.ToString()
+$tmp = [System.IO.Path]::GetTempFileName()
+secedit.exe /export /cfg "$($tmp)"
+$currentSetting = ""
+foreach($s in (Get-Content -Path $tmp)) {
+    if ($s -like "SECreateSymbolicLinkPrivilege*") {
+        $x = $s.split("=",[System.StringSplitOptions]::RemoveEmptyEntries)
+        $currentSetting = $x[1].Trim()
+    }
+}
+if ($currentSetting -notlike "*$($sidstr)*") {
+    if ([string]::IsNullOrEmpty($currentSetting)) {
+        $currentSetting = "*$($sidstr)"
+    } else {
+        $currentSetting = "*$($sidstr),$($currentSetting)"
+    }
+    $tmp2 = [System.IO.Path]::GetTempFileName()
+    @"
+[Unicode]
+Unicode=yes
+[Version]
+signature="`$CHICAGO`$"
+Revision=1
+[Privilege Rights]
+SECreateSymbolicLinkPrivilege = $($currentSetting)
+"@ | Set-Content -Path $tmp2 -Encoding Unicode -Force
+    cd (Split-Path $tmp2)
+    secedit.exe /configure /db "secedit.sdb" /cfg "$($tmp2)" /areas USER_RIGHTS
+}
+```
+1. Для применения изменений перезайдем в учетную запись Windows, либо выполним команду:
+```powershell
+gpupdate /force
+```
+{% endofftopic %}
+
+## Создадим новый репозиторий с приложением
+
+{% include chapter_prepare_repo_commands.md.liquid examples_to=page.examples examples_from=page.examples_initial from_scratch=true %}
+
+## Dockerfile
+
+> В Windows во избежание проблем при редактировании файлов рекомендуем использовать [Notepad++](https://notepad-plus-plus.org/downloads/) или любой другой редактор вместо стандартного Блокнота.
+
+Логика сборки нашего приложения будет реализована в [Dockerfile](https://docs.docker.com/engine/reference/builder/):
+
+{% include snippetcut_example path="Dockerfile" syntax="dockerfile" examples=page.examples %}
+
+## Интеграция werf и Dockerfile
+
+В корне репозитория, в основном файле конфигурации werf `werf.yaml` будет указано, какой `Dockerfile` должен будет использоваться при сборке с werf:
+
+{% include snippetcut_example path="werf.yaml" syntax="yaml" examples=page.examples %}
+
+В `werf.yaml` может описываться сборка сразу нескольких образов. Также для сборки образа существует ряд дополнительных настроек, с которыми можно ознакомиться в [документации]({{ site.url }}/documentation/reference/werf_yaml.html#dockerfile-image-section-image).
+
+## Сборка с werf
+
+> Обратите внимание, что перед запуском сборки/деплоя с werf все файлы должны быть добавлены в коммит. Чуть позже мы разберём, для чего это нужно и как обойтись без постоянного создания новых коммитов при локальной разработке.
+
+Запустим сборку командой [`werf build`]({{ site.url }}/documentation/reference/cli/werf_build.html):
+
+```shell
+werf build
+```
+
+Результат выполнения команды при успешной сборке:
+
+```shell
+┌ ⛵ image app
+│ ┌ Building stage app/dockerfile
+│ │ app/dockerfile  Sending build context to Docker daemon  4.096kB
+│ │ app/dockerfile  Step 1/14 : FROM alpine:3.14
+│ │ app/dockerfile   ---> d4ff818577bc
+│ │ app/dockerfile  Step 2/14 : WORKDIR /app
+│ │ app/dockerfile   ---> Using cache
+│ │ app/dockerfile   ---> fecacd1a1c75
+│ │ app/dockerfile  Step 3/14 : RUN apk add --no-cache --update nmap-ncat
+│ │ app/dockerfile   ---> Running in 9bead7817a6d
+│ │ app/dockerfile  fetch https://dl-cdn.alpinelinux.org/alpine/v3.14/main/x86_64/APKINDEX.tar.gz
+│ │ app/dockerfile  fetch https://dl-cdn.alpinelinux.org/alpine/v3.14/community/x86_64/APKINDEX.tar.gz
+│ │ app/dockerfile  (1/3) Installing lua5.3-libs (5.3.6-r0)
+│ │ app/dockerfile  (2/3) Installing libpcap (1.10.0-r0)
+│ │ app/dockerfile  (3/3) Installing nmap-ncat (7.91-r0)
+│ │ app/dockerfile  Executing busybox-1.33.1-r2.trigger
+│ │ app/dockerfile  OK: 6 MiB in 17 packages
+│ │ app/dockerfile  Removing intermediate container 9bead7817a6d
+│ │ app/dockerfile   ---> ac1cbf858c89
+│ │ app/dockerfile  Step 4/14 : COPY start.sh .
+│ │ app/dockerfile   ---> 0f51cefb9aaf
+│ │ app/dockerfile  Step 5/14 : RUN chmod +x start.sh
+│ │ app/dockerfile   ---> Running in c87188cc85f7
+│ │ app/dockerfile  Removing intermediate container c87188cc85f7
+│ │ app/dockerfile   ---> 7d47843543ed
+│ │ app/dockerfile  ...
+│ │ app/dockerfile  Successfully built 3091b84c90c3
+│ │ app/dockerfile  Successfully tagged 10560bef-f182-4769-bb23-c4a465814016:latest
+│ ├ Info
+│ │      name: werf-guide-app:638307ec810d3921a7b4f96c775d8aa8826fb0b2e1ac81fc793f02a6-1625134265354
+│ │        id: 4c3c2a9e934c
+│ │   created: 2021-07-01 11:11:05.3235952 +0100 BST
+│ │      size: 6.0 MiB
+│ └ Building stage app/dockerfile (9.98 seconds)
+└ ⛵ image app (10.85 seconds)
+
+Running time 11.02 seconds
+```
+
+## Запуск приложения
+
+Запустить контейнер локально на основе собранного образа можно командой [werf run]({{ site.url }}/documentation/cli/main/run.html):
+
+```shell
+werf run app --docker-options="-ti --rm -p 8000:8000" -- /app/start.sh
+```
+
+Здесь [параметры Docker](https://docs.docker.com/engine/reference/run/) мы задали опцией `--docker-options`, а команду для выполнения в контейнере указали в конце, после двух дефисов.
+
+Для проверки работоспособности можно открыть страницу [http://127.0.0.1:8000/ping](http://127.0.0.1:8000/ping) в браузере или воспользоваться утилитой `curl` в соседнем терминале:
+
+```shell
+curl http://127.0.0.1:8000/ping
+```
+
+В результате вернётся сообщение `pong`, а в логе контейнера появится следующий текст:
+
+```shell
+GET /ping HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: curl/7.67.0
+Accept: */*
+```

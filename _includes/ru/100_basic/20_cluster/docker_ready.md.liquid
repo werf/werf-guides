@@ -1,0 +1,101 @@
+<div class="tabs">
+<a href="javascript:void(0)" class="tabs__btn tabs__docker_ready__btn active" onclick="openTab(event, 'tabs__docker_ready__btn', 'tabs__docker_ready__content', 'tab__docker_ready__linux')">Linux</a>
+<a href="javascript:void(0)" class="tabs__btn tabs__docker_ready__btn" onclick="openTab(event, 'tabs__docker_ready__btn', 'tabs__docker_ready__content', 'tab__docker_ready__macos')">macOS</a>
+<a href="javascript:void(0)" class="tabs__btn tabs__docker_ready__btn" onclick="openTab(event, 'tabs__docker_ready__btn', 'tabs__docker_ready__content', 'tab__docker_ready__windows')">Windows</a>
+</div>
+
+<div id="tab__docker_ready__windows" class="tabs__content tabs__docker_ready__content" markdown="1">
+Запустим приложение Docker Desktop. Приложению понадобится некоторое время для того, чтобы запустить Docker. Если никаких ошибок в процессе запуска не возникло, то проверим, что Docker запущен и корректно настроен:
+```powershell
+docker run hello-world
+```
+
+Результат успешного выполнения команды:
+```shell
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+b8dfde127a29: Pull complete
+Digest: sha256:9f6ad537c5132bcce57f7a0a20e317228d382c3cd61edae14650eec68b2b345c
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+```
+
+При возникновении проблем обратитесь к [документации Docker](https://docs.docker.com/docker-for-windows/troubleshoot/) для их устранения.
+</div>
+
+<div id="tab__docker_ready__macos" class="tabs__content tabs__docker_ready__content" markdown="1">
+Запустим приложение Docker Desktop. Приложению понадобится некоторое время для того, чтобы запустить Docker. Если никаких ошибок в процессе запуска не возникло, то проверим, что Docker запущен и корректно настроен:
+```shell
+docker run hello-world
+```
+
+Результат успешного выполнения команды:
+```shell
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+b8dfde127a29: Pull complete
+Digest: sha256:9f6ad537c5132bcce57f7a0a20e317228d382c3cd61edae14650eec68b2b345c
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+```
+
+При возникновении проблем обратитесь к [документации Docker](https://docs.docker.com/docker-for-mac/troubleshoot/) для их устранения.
+</div>
+
+<div id="tab__docker_ready__linux" class="tabs__content tabs__docker_ready__content active" markdown="1">
+Запустим Docker:
+```shell
+sudo systemctl restart docker
+```
+
+Убедимся, что Docker запустился:
+```shell
+sudo systemctl status docker
+```
+
+Результат выполнения команды, если Docker успешно запущен:
+```shell
+● docker.service - Docker Application Container Engine
+     Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+     Active: active (running) since Thu 2021-06-24 13:05:17 MSK; 13s ago
+TriggeredBy: ● docker.socket
+       Docs: https://docs.docker.com
+   Main PID: 2013888 (dockerd)
+      Tasks: 36
+     Memory: 100.3M
+     CGroup: /system.slice/docker.service
+             └─2013888 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+dockerd[2013888]: time="2021-06-24T13:05:16.936197880+03:00" level=warning msg="Your kernel does not support CPU realtime scheduler"
+dockerd[2013888]: time="2021-06-24T13:05:16.936219851+03:00" level=warning msg="Your kernel does not support cgroup blkio weight"
+dockerd[2013888]: time="2021-06-24T13:05:16.936224976+03:00" level=warning msg="Your kernel does not support cgroup blkio weight_device"
+dockerd[2013888]: time="2021-06-24T13:05:16.936311001+03:00" level=info msg="Loading containers: start."
+dockerd[2013888]: time="2021-06-24T13:05:17.119938367+03:00" level=info msg="Loading containers: done."
+dockerd[2013888]: time="2021-06-24T13:05:17.134054120+03:00" level=info msg="Daemon has completed initialization"
+systemd[1]: Started Docker Application Container Engine.
+dockerd[2013888]: time="2021-06-24T13:05:17.148493957+03:00" level=info msg="API listen on /run/docker.sock"
+```
+
+Теперь проверим, что Docker доступен и корректно настроен:
+```shell
+docker run hello-world
+```
+
+Результат успешного выполнения команды:
+```shell
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+b8dfde127a29: Pull complete
+Digest: sha256:9f6ad537c5132bcce57f7a0a20e317228d382c3cd61edae14650eec68b2b345c
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+```
+
+При возникновении проблем обратитесь к [документации Docker](https://docs.docker.com/engine/install/linux-postinstall/#troubleshooting) для их устранения.
+</div>

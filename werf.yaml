@@ -3,7 +3,7 @@ project: werfio-guides
 ---
 
 image: jekyll_base
-fromCacheVersion: "1"
+fromCacheVersion: "2"
 from: jekyll/builder:3
 git:
   - add: /
@@ -23,6 +23,7 @@ shell:
 
 {{- range $lang := list "en" "ru" }}
 image: guides_{{ $lang }}
+fromCacheVersion: "2"
 fromImage: jekyll_base
 git:
   - add: /
@@ -57,6 +58,7 @@ shell:
 {{ end -}}
 
 image: frontend
+fromCacheVersion: "2"
 from: nginx:stable-alpine
 shell:
   setup:

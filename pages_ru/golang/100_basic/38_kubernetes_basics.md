@@ -1,5 +1,10 @@
 ---
 title: Основы Kubernetes
 permalink: golang/100_basic/38_kubernetes_basics.html
-layout: development
+chapter_initial_prepare_repo_no_changes: true
+examples_initial: examples/basic/005_kubernetes_basics
+description: |
+  В этой главе мы рассмотрим основные ресурсы Kubernetes для развертывания приложений и обеспечения доступа к ним изнутри и снаружи кластера.
 ---
+
+{% include 100_basic/38_kubernetes_basics.md.liquid %}

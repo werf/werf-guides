@@ -28,6 +28,7 @@ jobs:
 
       - name: Prepare environment
         run: |
+          chmod 777 Gemfile.lock
           bundle install
           mkdir -pm 777 .jekyll-cache _site
           chmod -R 777 assets/images/plantuml_cache

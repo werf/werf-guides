@@ -1,0 +1,95 @@
+<div class="tabs">
+<a href="javascript:void(0)" class="tabs__btn tabs__system_restarted__btn active" onclick="openTab(event, 'tabs__system_restarted__btn', 'tabs__system_restarted__content', 'tab__system_restarted__minikube_macos_linux')">Linux / macOS</a>
+<a href="javascript:void(0)" class="tabs__btn tabs__system_restarted__btn" onclick="openTab(event, 'tabs__system_restarted__btn', 'tabs__system_restarted__content', 'tab__system_restarted__minikube_windows')">Windows</a>
+</div>
+
+<div id="tab__system_restarted__minikube_windows" class="tabs__content tabs__system_restarted__content" markdown="1">
+Запустим кластер minikube, уже настроенный в начале главы ["Подготовка окружения"]({{ page.framework_id | append: "/100_basic/20_cluster.html" | relative_url }}):
+```powershell
+minikube start
+```
+
+Выставим Namespace по умолчанию, чтобы не указывать его при каждом вызове `kubectl`:
+```powershell
+kubectl config set-context minikube --namespace=werf-guide-app
+```
+
+Результат успешного выполнения команды:
+```shell
+😄  minikube v1.20.0 on Ubuntu 20.04
+✨  Using the docker driver based on existing profile
+👍  Starting control plane node minikube in cluster minikube
+🚜  Pulling base image ...
+🎉  minikube 1.21.0 is available! Download it: https://github.com/kubernetes/minikube/releases/tag/v1.21.0
+💡  To disable this notice, run: 'minikube config set WantUpdateNotification false'
+
+🔄  Restarting existing docker container for "minikube" ...
+🐳  Preparing Kubernetes v1.20.2 on Docker 20.10.6 ...
+🔎  Verifying Kubernetes components...
+    ▪ Using image gcr.io/google_containers/kube-registry-proxy:0.4
+    ▪ Using image k8s.gcr.io/ingress-nginx/controller:v0.44.0
+    ▪ Using image registry:2.7.1
+    ▪ Using image docker.io/jettech/kube-webhook-certgen:v1.5.1
+    ▪ Using image docker.io/jettech/kube-webhook-certgen:v1.5.1
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🔎  Verifying registry addon...
+🔎  Verifying ingress addon...
+🌟  Enabled addons: storage-provisioner, registry, default-storageclass, ingress
+🏄  Done! kubectl is now configured to use "minikube" cluster and "werf-guide-app" namespace by default
+```
+
+Убедитесь, что вывод команды содержит строку:
+```shell
+Restarting existing docker container for "minikube"
+```
+
+Если её нет, значит был создан новый кластер minikube вместо использования старого. В таком случае повторите установку рабочего окружения с minikube [с самого начала]({{ page.framework_id | append: "/100_basic/20_cluster.html" | relative_url }}).
+
+Теперь запустите команду в фоновом PowerShell-терминале и не закрывайте его:
+```powershell
+minikube tunnel --cleanup=true
+```
+</div>
+
+<div id="tab__system_restarted__minikube_macos_linux" class="tabs__content tabs__system_restarted__content active" markdown="1">
+Запустим кластер minikube, уже настроенный в начале главы ["Подготовка окружения"]({{ page.framework_id | append: "/100_basic/20_cluster.html" | relative_url }}):
+```shell
+minikube start --namespace werf-guide-app
+```
+
+Выставим Namespace по умолчанию, чтобы не указывать его при каждом вызове `kubectl`:
+```shell
+kubectl config set-context minikube --namespace=werf-guide-app
+```
+
+Результат успешного выполнения команды:
+```shell
+😄  minikube v1.20.0 on Ubuntu 20.04
+✨  Using the docker driver based on existing profile
+👍  Starting control plane node minikube in cluster minikube
+🚜  Pulling base image ...
+🎉  minikube 1.21.0 is available! Download it: https://github.com/kubernetes/minikube/releases/tag/v1.21.0
+💡  To disable this notice, run: 'minikube config set WantUpdateNotification false'
+
+🔄  Restarting existing docker container for "minikube" ...
+🐳  Preparing Kubernetes v1.20.2 on Docker 20.10.6 ...
+🔎  Verifying Kubernetes components...
+    ▪ Using image gcr.io/google_containers/kube-registry-proxy:0.4
+    ▪ Using image k8s.gcr.io/ingress-nginx/controller:v0.44.0
+    ▪ Using image registry:2.7.1
+    ▪ Using image docker.io/jettech/kube-webhook-certgen:v1.5.1
+    ▪ Using image docker.io/jettech/kube-webhook-certgen:v1.5.1
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🔎  Verifying registry addon...
+🔎  Verifying ingress addon...
+🌟  Enabled addons: storage-provisioner, registry, default-storageclass, ingress
+🏄  Done! kubectl is now configured to use "minikube" cluster and "werf-guide-app" namespace by default
+```
+
+Убедитесь, что вывод команды содержит строку:
+```shell
+Restarting existing docker container for "minikube"
+```
+
+Если её нет, значит был создан новый кластер minikube вместо использования старого. В таком случае повторите установку рабочего окружения с minikube [с самого начала]({{ page.framework_id | append: "/100_basic/20_cluster.html" | relative_url }}).
+</div>
